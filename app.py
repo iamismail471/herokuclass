@@ -2,37 +2,35 @@ import dash
 import dash_auth
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
  
 USERNAME_PASSWORD_PAIRS = [
-    ['ismail', 'ismail'],['ismail', 'ismail']
+    ['nethu', '12345'],['guvi', 'guvi'],['ismail','ismail'],
 ]
  
 app = dash.Dash()
 auth = dash_auth.BasicAuth(app,USERNAME_PASSWORD_PAIRS)
 server = app.server
-
+ 
 app.layout = html.Div([
-   html.Div('Convert Temperature'),
-   'Celsius',
-   dcc.Input(
-       id="celsius",
-       value=0.0,
-       type="number"
-   ),
-   ' = Fahrenheit',
-   dcc.Input(
-       id="fahrenheit",
-       value=32.0,
-       type="number",
-   ),
-])
+    dcc.RangeSlider(
+        id='range-slider',
+        min=-5,
+        max=6,
+        marks={i:str(i) for i in range(-5, 7)},
+        value=[-3, 4]
+    ),
+    html.H1(id='product')  # this is the output
+], style={'width':'50%'})
  
 @app.callback(
-   Output("celsius", "value"),
-   Output("fahrenheit", "value"),
-   Input("celsius", "value"),
-   Input("fahrenheit", "value"),
+    Output('product', 'children'),
+    [Input('range-slider', 'value')])
+def update_value(value_list):
+    return value_list[0]*value_list[1]
+ 
+if __name__ == '__main__':
+    app.run_server(debug=True)
 )
 def sync_input(celsius, fahrenheit):
    ctx = dash.callback_context
